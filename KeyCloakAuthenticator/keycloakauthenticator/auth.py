@@ -199,6 +199,7 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
         try:
             decoded_token = jwt.decode(token, self.public_key, options=options, audience=self.client_id,
                     issuer=self.oidc_issuer, algorithms=self.jwt_signing_algorithms)
+            self.log.info("decoded_token: {}".format(decoded_token))
             return decoded_token
         except jwt.exceptions.ExpiredSignatureError:
             self.log.info("Token expired")
@@ -240,6 +241,7 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
             if response.body:
                 body = json.loads(response.body.decode('utf8', 'replace'))
                 access_token = body.get('access_token', None)
+                self.log.info("access token: {}".format(access_token))
             if access_token is None:
                 self.log.error("Could not obtain access token for {}".format(service_name))
                 continue
@@ -276,7 +278,9 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
             if response.body:
                 body = json.loads(response.body.decode('utf8', 'replace'))
                 access_t = body.get('access_token', None)
+                self.log.info("access token: {}".format(access_t))
                 refresh_t = body.get('refresh_token', None)
+                self.log.info("refresh token: {}".format(refresh_t))
             if access_t is None:
                self.log.error("Could not obtain access token for swan") 
             if refresh_t is None:
@@ -296,7 +300,9 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
 
             try:
                 decoded_token = self._decode_token(user['auth_state']['access_token'])
+                self.log.info("decoded token: {}".format(decoded_token))
                 user_roles = self.claim_roles_key(self, decoded_token)
+                self.log.info("user_roles: {}".format(user_roles))
             except:
                 self.log.error("Unable to retrieve the roles, denying access.", exc_info=True)
                 return None
