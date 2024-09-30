@@ -197,6 +197,11 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
         options.setdefault("verify_iss", True)
 
         try:
+            self.log.info("audience: {}".format(self.client_id))
+            self.log.info("oidc_issuer: {}".format(self.oidc_issuer))
+            self.log.info("jwt_signing_algorithms: {}".format(self.jwt_signing_algorithms))
+            self.log.info("token: {}".format(token))
+            self.log.info("_decode_token options: {}".format(options))
             decoded_token = jwt.decode(token, self.public_key, options=options, audience=self.client_id,
                     issuer=self.oidc_issuer, algorithms=self.jwt_signing_algorithms)
             self.log.info("decoded_token: {}".format(decoded_token))
@@ -304,7 +309,7 @@ class KeyCloakAuthenticator(GenericOAuthenticator):
                 user_roles = self.claim_roles_key(self, decoded_token)
                 self.log.info("user_roles: {}".format(user_roles))
             except:
-                self.log.error("Unable to retrieve the roles, denying access.", exc_info=True)
+                self.log.error("Unxblx to retrieve the roles, denying access.", exc_info=True)
                 return None
 
             if not isinstance(user_roles, set):
